@@ -1,13 +1,10 @@
-const Album = require('../models/album'); // nếu bạn có model, hoặc dùng service tương tự
+const Album = require('../models/album'); 
 const Song = require('../models/song');
 const { responseSuccess, responseWithError } = require('./../helpers/response');
 
-// Giả sử bạn có service riêng, hoặc dùng model trực tiếp
-// Ở đây mình demo dùng model Mongoose trực tiếp cho đơn giản
-
 exports.getAllAlbums = async (req, res) => {
   try {
-    const albums = await Album.find().sort({ ReleaseDate: -1 });
+    const albums = await Album.find().sort({ ReleaseDate: -1 }).lean();;
     res.json(responseSuccess(albums));
   } catch (err) {
     res.status(500).json(responseWithError(err));

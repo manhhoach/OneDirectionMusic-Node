@@ -3,7 +3,7 @@ const { responseSuccess, responseWithError } = require('./../helpers/response');
 
 exports.getAllSingers = async (req, res) => {
   try {
-    const singers = await Singer.find();
+    const singers = await Singer.find().lean();
     res.json(responseSuccess(singers));
   } catch (err) {
     res.status(500).json(responseWithError(err));

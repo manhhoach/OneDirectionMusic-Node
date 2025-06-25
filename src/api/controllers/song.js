@@ -1,7 +1,5 @@
 const Song = require("./../models/song");
-const Album = require("./../models/album");
 const { responseSuccess, responseWithError } = require('./../helpers/response');
-const mongoose = require("mongoose");
 
 exports.getDetail = async (req, res) => {
   try {

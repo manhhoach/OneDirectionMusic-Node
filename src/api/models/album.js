@@ -3,7 +3,7 @@ const networkSchema = require('./network');
 const baseMongoEntity = require('./baseMongoEntity');
 
 
-const AlbumSchema = new mongoose.Schema({
+const albumSchema = new mongoose.Schema({
   ...baseMongoEntity,
   name: { type: String, required: true },
   slug: { type: String, required: true, unique: true },
@@ -15,7 +15,7 @@ const AlbumSchema = new mongoose.Schema({
   description: { type: String },
   mainColor: { type: String }
 }, {
-  collection: 'Album' // ⚠️ Rất quan trọng: tên chính xác của collection bạn đã có
+  collection: 'Album'
 });
 
-module.exports = mongoose.model('Album', AlbumSchema);
+module.exports = mongoose.model('Album', albumSchema);
