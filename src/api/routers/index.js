@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 
-const uploadRouter = require("./upload");
+const singerRouter = require("./singer");
 const userRouter = require("./user");
 
 router.use("/users", userRouter);
-router.use("/upload", uploadRouter);
+router.use("/singer", singerRouter);
 
 module.exports = router;
