@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const NetworkSchema = require('./network');
-const BaseMongoEntity = require('./baseEntity');
+const BaseMongoEntity = require('./baseMongoEntity');
 
 const SingerSchema = new mongoose.Schema({
   ...BaseMongoEntity,

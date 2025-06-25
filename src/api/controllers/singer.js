@@ -1,5 +1,5 @@
 const Singer = require('../models/singer');
-const { responseSuccess, responseWithError } = require('../utils/responseHelpers');
+const { responseSuccess, responseWithError } = require('./../helpers/response');
 
 exports.getAllSingers = async (req, res) => {
   try {

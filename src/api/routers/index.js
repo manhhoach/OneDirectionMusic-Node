@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 
 const singerRouter = require("./singer");
-const userRouter = require("./user");
+const albumRouter = require("./album");
 
-router.use("/users", userRouter);
 router.use("/singer", singerRouter);
+router.use("/album", albumRouter);
 
 module.exports = router;
