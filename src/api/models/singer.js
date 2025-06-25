@@ -9,6 +9,8 @@ const SingerSchema = new mongoose.Schema({
   images: [{ type: String }],
   networks: [NetworkSchema],
   order: { type: Number }
+},{
+  collection: 'Singer' // ⚠️ Rất quan trọng: tên chính xác của collection bạn đã có
 });
 
 

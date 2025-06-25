@@ -14,6 +14,8 @@ const AlbumSchema = new mongoose.Schema({
   releaseDate: { type: Date },
   description: { type: String },
   mainColor: { type: String }
+}, {
+  collection: 'Album' // ⚠️ Rất quan trọng: tên chính xác của collection bạn đã có
 });
 
 module.exports = mongoose.model('Album', AlbumSchema);

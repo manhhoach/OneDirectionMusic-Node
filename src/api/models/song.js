@@ -14,6 +14,8 @@ const songSchema = new mongoose.Schema({
   releaseDate: { type: Date },
   order: { type: Number, default: 0 },
   isBonus: { type: Boolean, default: false }
+},{
+  collection: 'Song' // ⚠️ Rất quan trọng: tên chính xác của collection bạn đã có
 });
 
 module.exports = mongoose.model('Song', songSchema);
