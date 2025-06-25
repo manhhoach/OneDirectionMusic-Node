@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 const NetworkSchema = require('./network');
-const BaseMongoEntity = require('./baseMongoEntity');
+const baseMongoEntity = require('./baseMongoEntity');
 
 const SingerSchema = new mongoose.Schema({
-  ...BaseMongoEntity,
+  ...baseMongoEntity,
   name: { type: String, required: true },
   description: { type: String },
   images: [{ type: String }],
