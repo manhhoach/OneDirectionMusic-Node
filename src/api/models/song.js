@@ -4,16 +4,16 @@ const baseMongoEntity = require('./baseMongoEntity');
 
 const songSchema = new mongoose.Schema({
   ...baseMongoEntity,
-  name: { type: String, required: true },
-  slug: { type: String, required: true, unique: true },
-  authors: { type: String },
-  lyrics: { type: String },
-  albumId: { type: mongoose.Schema.Types.ObjectId, ref: 'Album' }, // ref tới Album
-  photos: [{ type: String }],
-  youtubeUrl: { type: String },
-  releaseDate: { type: Date },
-  order: { type: Number, default: 0 },
-  isBonus: { type: Boolean, default: false }
+  Name: { type: String, required: true },
+  Slug: { type: String, required: true, unique: true },
+  Authors: { type: String },
+  Lyrics: { type: String },
+  AlbumId: { type: mongoose.Schema.Types.ObjectId, ref: 'Album' }, // ref tới Album
+  Photos: [{ type: String }],
+  YoutubeUrl: { type: String },
+  ReleaseDate: { type: Date },
+  Order: { type: Number, default: 0 },
+  IsBonus: { type: Boolean, default: false }
 },{
   collection: 'Song' 
 });

@@ -1,10 +1,10 @@
-const Album = require('../models/album'); 
+const Album = require('../models/album');
 const Song = require('../models/song');
 const { responseSuccess, responseWithError } = require('./../helpers/response');
 
 exports.getAllAlbums = async (req, res) => {
   try {
-    const albums = await Album.find().sort({ ReleaseDate: -1 }).lean();;
+    const albums = await Album.find().sort({ ReleaseDate: -1 }).lean();
     res.json(responseSuccess(albums));
   } catch (err) {
     res.status(500).json(responseWithError(err));
@@ -23,19 +23,19 @@ exports.getAlbumPhotos = async (req, res) => {
           localField: '_id',
           foreignField: 'albumId',
           pipeline: [
-            { 
-              $match: { 
-                $expr: { $gt: [ { $size: "$photos" }, 0 ] } 
-              } 
+            {
+              $match: {
+                $expr: { $gt: [{ $size: "$photos" }, 0] }
+              }
             },
-            { 
-              $project: { 
+            {
+              $project: {
                 _id: 0,
                 name: 1,
                 slug: 1,
                 count: { $size: "$photos" },
                 firstImage: { $arrayElemAt: ["$photos", 0] }
-              } 
+              }
             }
           ],
           as: 'songs'

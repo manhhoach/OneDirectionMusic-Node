@@ -5,15 +5,15 @@ const baseMongoEntity = require('./baseMongoEntity');
 
 const albumSchema = new mongoose.Schema({
   ...baseMongoEntity,
-  name: { type: String, required: true },
-  slug: { type: String, required: true, unique: true },
-  imageCover: { type: String },
-  image: { type: String },
-  linksToBuy: [networkSchema],
-  fanVideos: [{ type: String }],
-  releaseDate: { type: Date },
-  description: { type: String },
-  mainColor: { type: String }
+  Name: { type: String, required: true },
+  Slug: { type: String, required: true, unique: true },
+  ImageCover: { type: String },
+  Image: { type: String },
+  LinksToBuy: [networkSchema],
+  FanVideos: [{ type: String }],
+  ReleaseDate: { type: Date },
+  Description: { type: String },
+  MainColor: { type: String }
 }, {
   collection: 'Album'
 });

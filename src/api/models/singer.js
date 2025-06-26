@@ -4,11 +4,11 @@ const baseMongoEntity = require('./baseMongoEntity');
 
 const singerSchema = new mongoose.Schema({
   ...baseMongoEntity,
-  name: { type: String, required: true },
-  description: { type: String },
-  images: [{ type: String }],
-  networks: [NetworkSchema],
-  order: { type: Number }
+  Name: { type: String, required: true },
+  Description: { type: String },
+  Images: [{ type: String }],
+  Networks: [NetworkSchema],
+  Order: { type: Number }
 }, {
   collection: 'Singer'
 });
