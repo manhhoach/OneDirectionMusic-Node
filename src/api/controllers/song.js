@@ -3,81 +3,80 @@ const { responseSuccess, responseWithError } = require('./../helpers/response');
 
 exports.getDetail = async (req, res) => {
   try {
-    const slug = req.params.slug;
+    const slug = req.params.slug.toLowerCase();
     const pipeline = [
       { $match: { Slug: slug } },
-      // {
-      //   $lookup: {
-      //     from: "Song",
-      //     let: { currentOrder: "$order", currentAlbumId: "$albumId" },
-      //     pipeline: [
-      //       {
-      //         $match: {
-      //           $expr: {
-      //             $and: [
-      //               { $eq: ["$Order", { $add: ["$$currentOrder", 1] }] },
-      //               { $eq: ["$AlbumId", "$$currentAlbumId"] },
-      //             ],
-      //           },
-      //         },
-      //       },
-      //       { $project: { Slug: 1, _id: 0 } },
-      //     ],
-      //     as: "nextSong",
-      //   },
-      // },
-      // { $unwind: { path: "$nextSong", preserveNullAndEmptyArrays: true } },
+      {
+        $lookup: {
+          from: "Song",
+          let: { currentOrder: "$Order", currentAlbumId: "$AlbumId" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$Order", { $add: ["$$currentOrder", 1] }] },
+                    { $eq: ["$AlbumId", "$$currentAlbumId"] },
+                  ],
+                },
+              },
+            },
+            { $project: { slug: '$Slug', _id: 0 } },
+          ],
+          as: "nextSong",
+        },
+      },
+      { $unwind: { path: "$nextSong", preserveNullAndEmptyArrays: true } },
 
-      // {
-      //   $lookup: {
-      //     from: "songs",
-      //     let: { currentOrder: "$order", currentAlbumId: "$albumId" },
-      //     pipeline: [
-      //       {
-      //         $match: {
-      //           $expr: {
-      //             $and: [
-      //               { $eq: ["$order", { $subtract: ["$$currentOrder", 1] }] },
-      //               { $eq: ["$albumId", "$$currentAlbumId"] },
-      //             ],
-      //           },
-      //         },
-      //       },
-      //       { $project: { slug: 1, _id: 0 } },
-      //     ],
-      //     as: "prevSong",
-      //   },
-      // },
-      // { $unwind: { path: "$prevSong", preserveNullAndEmptyArrays: true } },
+      {
+        $lookup: {
+          from: "Song",
+          let: { currentOrder: "$Order", currentAlbumId: "$AlbumId" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$Order", { $subtract: ["$$currentOrder", 1] }] },
+                    { $eq: ["$AlbumId", "$$currentAlbumId"] },
+                  ],
+                },
+              },
+            },
+            { $project: { slug: '$Slug', _id: 0 } },
+          ],
+          as: "prevSong",
+        },
+      },
+      { $unwind: { path: "$prevSong", preserveNullAndEmptyArrays: true } },
 
-      // {
-      //   $lookup: {
-      //     from: "Album",
-      //     localField: "AlbumId",
-      //     foreignField: "_id",
-      //     as: "albumData",
-      //   },
-      // },
-      // { $unwind: "$albumData" },
+      {
+        $lookup: {
+          from: "Album",
+          localField: "AlbumId",
+          foreignField: "_id",
+          as: "albumData",
+        },
+      },
+      { $unwind: "$albumData" },
 
       {
         $project: {
           _id: 0,
-          name: 1,
-          order: 1,
-          releaseDate: 1,
-          authors: 1,
-          lyrics: 1,
-       //   albumName: "$albumData.name",
-       //   albumImageCover: "$albumData.imageCover",
-          mainColor: "$albumData.mainColor",
-          //   nextSongSlug: "$nextSong.slug",
-          //    prevSongSlug: "$prevSong.slug",
+          name: '$Name',
+          order: '$Order',
+          releaseDate: '$ReleaseDate',
+          authors: '$Authors',
+          lyrics: '$Lyrics',
+          albumName: "$albumData.Name",
+          albumImageCover: "$albumData.ImageCover",
+          mainColor: "$albumData.MainColor",
+          nextSongSlug: "$nextSong.slug",
+          prevSongSlug: "$prevSong.slug",
         },
       },
     ];
     const result = await Song.aggregate(pipeline).exec();
-    console.log(result);
 
     if (!result || result.length === 0) {
       return res.status(404).json(responseWithError("Song not found"));
@@ -91,14 +90,14 @@ exports.getDetail = async (req, res) => {
 
 exports.getPhotos = async (req, res) => {
   try {
-    const slug = req.params.slug;
+    const slug = req.params.slug.toLowerCase();;
 
     const result = await Song.aggregate([
-      { $match: { slug } },
+      { $match: { Slug: slug } },
       {
         $project: {
-          photos: 1,
-          name: 1,
+          photos: '$Photos',
+          name: '$Name',
           _id: 0,
         },
       },

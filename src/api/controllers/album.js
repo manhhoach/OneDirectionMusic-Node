@@ -32,7 +32,7 @@ exports.getAllAlbums = async (req, res) => {
 
 exports.getAlbumPhotos = async (req, res) => {
   try {
-    const slug = req.params.slug;
+    const slug = req.params.slug.toLowerCase();;
     const pipeline = [
       { $match: { Slug: slug } },
       {
