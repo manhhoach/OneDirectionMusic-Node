@@ -4,63 +4,61 @@ const { responseSuccess, responseWithError } = require('./../helpers/response');
 exports.getDetail = async (req, res) => {
   try {
     const slug = req.params.slug;
+    const pipeline = [
+      { $match: { Slug: slug } },
+      // {
+      //   $lookup: {
+      //     from: "Song",
+      //     let: { currentOrder: "$order", currentAlbumId: "$albumId" },
+      //     pipeline: [
+      //       {
+      //         $match: {
+      //           $expr: {
+      //             $and: [
+      //               { $eq: ["$Order", { $add: ["$$currentOrder", 1] }] },
+      //               { $eq: ["$AlbumId", "$$currentAlbumId"] },
+      //             ],
+      //           },
+      //         },
+      //       },
+      //       { $project: { Slug: 1, _id: 0 } },
+      //     ],
+      //     as: "nextSong",
+      //   },
+      // },
+      // { $unwind: { path: "$nextSong", preserveNullAndEmptyArrays: true } },
 
-    const result = await Song.aggregate([
-      { $match: { slug } },
+      // {
+      //   $lookup: {
+      //     from: "songs",
+      //     let: { currentOrder: "$order", currentAlbumId: "$albumId" },
+      //     pipeline: [
+      //       {
+      //         $match: {
+      //           $expr: {
+      //             $and: [
+      //               { $eq: ["$order", { $subtract: ["$$currentOrder", 1] }] },
+      //               { $eq: ["$albumId", "$$currentAlbumId"] },
+      //             ],
+      //           },
+      //         },
+      //       },
+      //       { $project: { slug: 1, _id: 0 } },
+      //     ],
+      //     as: "prevSong",
+      //   },
+      // },
+      // { $unwind: { path: "$prevSong", preserveNullAndEmptyArrays: true } },
 
-      {
-        $lookup: {
-          from: "songs",
-          let: { currentOrder: "$order", currentAlbumId: "$albumId" },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ["$order", { $add: ["$$currentOrder", 1] }] },
-                    { $eq: ["$albumId", "$$currentAlbumId"] },
-                  ],
-                },
-              },
-            },
-            { $project: { slug: 1, _id: 0 } },
-          ],
-          as: "nextSong",
-        },
-      },
-      { $unwind: { path: "$nextSong", preserveNullAndEmptyArrays: true } },
-
-      {
-        $lookup: {
-          from: "songs",
-          let: { currentOrder: "$order", currentAlbumId: "$albumId" },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ["$order", { $subtract: ["$$currentOrder", 1] }] },
-                    { $eq: ["$albumId", "$$currentAlbumId"] },
-                  ],
-                },
-              },
-            },
-            { $project: { slug: 1, _id: 0 } },
-          ],
-          as: "prevSong",
-        },
-      },
-      { $unwind: { path: "$prevSong", preserveNullAndEmptyArrays: true } },
-
-      {
-        $lookup: {
-          from: "albums",
-          localField: "albumId",
-          foreignField: "_id",
-          as: "albumData",
-        },
-      },
-      { $unwind: "$albumData" },
+      // {
+      //   $lookup: {
+      //     from: "Album",
+      //     localField: "AlbumId",
+      //     foreignField: "_id",
+      //     as: "albumData",
+      //   },
+      // },
+      // { $unwind: "$albumData" },
 
       {
         $project: {
@@ -70,14 +68,16 @@ exports.getDetail = async (req, res) => {
           releaseDate: 1,
           authors: 1,
           lyrics: 1,
-          albumName: "$albumData.name",
-          albumImageCover: "$albumData.imageCover",
+       //   albumName: "$albumData.name",
+       //   albumImageCover: "$albumData.imageCover",
           mainColor: "$albumData.mainColor",
-          nextSongSlug: "$nextSong.slug",
-          prevSongSlug: "$prevSong.slug",
+          //   nextSongSlug: "$nextSong.slug",
+          //    prevSongSlug: "$prevSong.slug",
         },
       },
-    ]);
+    ];
+    const result = await Song.aggregate(pipeline).exec();
+    console.log(result);
 
     if (!result || result.length === 0) {
       return res.status(404).json(responseWithError("Song not found"));

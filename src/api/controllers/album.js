@@ -5,7 +5,26 @@ const { responseSuccess, responseWithError } = require('./../helpers/response');
 exports.getAllAlbums = async (req, res) => {
   try {
     const albums = await Album.find().sort({ ReleaseDate: -1 }).lean();
-    res.json(responseSuccess(albums));
+    const data = albums.map(album => {
+      return {
+        id: album._id,
+        name: album.Name,
+        slug: album.Slug,
+        imageCover: album.ImageCover,
+        image: album.Image,
+        mainColor: album.MainColor,
+        releaseDate: album.ReleaseDate,
+        linksToBuy: album.LinksToBuy.map(link => {
+          return {
+            icon: link.Icon,
+            link: link.Link,
+          }
+        }),
+        fanVideos: album.FanVideos,
+        description: album.Description,
+      };
+    })
+    res.json(responseSuccess(data));
   } catch (err) {
     res.status(500).json(responseWithError(err));
   }
@@ -14,18 +33,17 @@ exports.getAllAlbums = async (req, res) => {
 exports.getAlbumPhotos = async (req, res) => {
   try {
     const slug = req.params.slug;
-
     const pipeline = [
-      { $match: { slug } },
+      { $match: { Slug: slug } },
       {
         $lookup: {
           from: Song.collection.name,
           localField: '_id',
-          foreignField: 'albumId',
+          foreignField: 'AlbumId',
           pipeline: [
             {
               $match: {
-                $expr: { $gt: [{ $size: "$photos" }, 0] }
+                $expr: { $gt: [{ $size: "$Photos" }, 0] }
               }
             },
             {
@@ -33,8 +51,8 @@ exports.getAlbumPhotos = async (req, res) => {
                 _id: 0,
                 name: 1,
                 slug: 1,
-                count: { $size: "$photos" },
-                firstImage: { $arrayElemAt: ["$photos", 0] }
+                count: { $size: "$Photos" },
+                firstImage: { $arrayElemAt: ["$Photos", 0] }
               }
             }
           ],
@@ -67,38 +85,43 @@ exports.getAlbumDetail = async (req, res) => {
     const slug = req.params.slug.toLowerCase();
 
     const pipeline = [
-      { $match: { slug } },
+      { $match: { Slug: slug } },
       {
         $lookup: {
           from: Song.collection.name, // tên collection của song
           localField: '_id',
-          foreignField: 'albumId',
+          foreignField: 'AlbumId',
           as: 'songs',
         },
       },
       {
         $project: {
-          name: 1,
-          imageCover: 1,
-          linksToBuy: 1,
-          image: 1,
-          mainColor: 1,
-          fanVideos: 1,
-          slug: 1,
-          releaseDate: 1,
+          name: '$Name',
+          imageCover: '$ImageCover',
+          linksToBuy: '$LinksToBuy',
+          image: '$Image',
+          mainColor: '$MainColor',
+          fanVideos: '$FanVideos',
+          slug: '$Slug',
+          releaseDate: '$ReleaseDate',
           songs: {
             $map: {
-              input: { $sortArray: { input: '$songs', sortBy: { order: 1 } } },
+              input: {
+                $sortArray: {
+                  input: '$songs',
+                  sortBy: { Order: 1 },
+                },
+              },
               as: 'e',
               in: {
-                slug: '$$e.slug',
-                name: '$$e.name',
-                order: '$$e.order',
-                isBonus: '$$e.isBonus',
+                slug: '$$e.Slug',
+                name: '$$e.Name',
+                order: '$$e.Order',
+                isBonus: '$$e.IsBonus',
               },
             },
           },
-        },
+        }
       },
     ];
 
@@ -107,9 +130,18 @@ exports.getAlbumDetail = async (req, res) => {
     if (!data || data.length === 0) {
       return res.status(404).json(responseWithError('Album not found'));
     }
+    var response = data[0];
 
-    // data là mảng, lấy phần tử đầu
-    res.json(responseSuccess(data[0]));
+    response.id = response._id;
+    delete response._id;
+    response.linksToBuy = response.linksToBuy.map(link => {
+      return {
+        icon: link.Icon,
+        link: link.Link,
+      };
+    });
+
+    res.json(responseSuccess(response));
   } catch (err) {
     res.status(500).json(responseWithError(err));
   }
