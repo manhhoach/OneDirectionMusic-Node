@@ -8,6 +8,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "7000:7000"
+    networks:
+      - shared-network
     env_file:
       - .env
     restart: always
