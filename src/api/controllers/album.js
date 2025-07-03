@@ -49,8 +49,8 @@ exports.getAlbumPhotos = async (req, res) => {
             {
               $project: {
                 _id: 0,
-                name: 1,
-                slug: 1,
+                name: '$Name',
+                slug: '$Slug',
                 count: { $size: "$Photos" },
                 firstImage: { $arrayElemAt: ["$Photos", 0] }
               }
@@ -62,7 +62,7 @@ exports.getAlbumPhotos = async (req, res) => {
       {
         $project: {
           _id: 0,
-          name: 1,
+          name: '$Name',
           songs: 1
         }
       }
